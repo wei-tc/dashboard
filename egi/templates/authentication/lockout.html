@@ -1,0 +1,10 @@
+{% extends 'navbar.html' %}
+
+{% block title %}Account Locked{% endblock %}
+
+{% block main %}
+    {{ block.super }}
+    <p>Account locked: too many login attempts. Contact
+        <a href="mailto:weitao.chi@gmail.com?subject=Locked Account">weitao.chi@gmail.com</a>
+        to unlock your account.</p>
+{% endblock %}

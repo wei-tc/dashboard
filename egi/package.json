@@ -1,0 +1,42 @@
+{
+  "name": "earthscience-toolbox",
+  "version": "1.0.0",
+  "description": "EGI dashboard",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js --progress --colors --mode production",
+    "watch": "webpack --config webpack.config.js --watch --mode development",
+    "build:dev": "webpack --config webpack.config.js --progress --colors --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wei-tc/earthscience-toolbox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wei-tc/earthscience-toolbox/issues"
+  },
+  "homepage": "https://github.com/wei-tc/earthscience-toolbox#readme",
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.15.1",
+    "eslint-plugin-react-hooks": "^2.1.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.10.1",
+    "react-bootstrap-modal": "^4.2.0",
+    "react-dom": "^16.10.1",
+    "semantic-ui-react": "^0.88.1",
+    "source-map-loader": "^0.2.4",
+    "webpack": "^4.41.0",
+    "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^3.3.9"
+  }
+}

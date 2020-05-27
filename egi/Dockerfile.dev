@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:experimental
+
+FROM python:3.7-slim-buster
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ARG HOME=/dashboard
+
+RUN mkdir $HOME
+RUN mkdir $HOME/staticfiles
+RUN mkdir -p $HOME/media/development
+WORKDIR $HOME
+
+RUN set -ex \
+    && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends mime-support
+
+COPY ./requirements.txt $HOME
+
+RUN set -ex \
+    && BUILD_DEPS=" \
+    build-essential \
+    libpcre3-dev \
+    libpq-dev \
+    libmariadb-dev \
+    npm \
+    " \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $BUILD_DEPS
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+COPY ./package*.json $HOME
+RUN npm ci
+
+COPY ./entrypoint.sh $HOME
+
+COPY . $HOME
+
+RUN npm run build:dev
+
+ENTRYPOINT ["/dashboard/entrypoint.sh"]
+

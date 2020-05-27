@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  dashboard:
+    restart: always
+    container_name: dashboard
+    build:
+      context: ./egi
+      dockerfile: Dockerfile.dev
+    image: dashboard:dev
+    volumes:
+      - ./egi:/home/dashboard
+      - static_volume_dev:/dashboard/staticfiles
+      - media_volume_dev:/dashboard/media/development
+    expose:
+      - 8000
+    env_file:
+      - .env.dev
+  nginx:
+    build: nginx
+    container_name: nginx
+    image: nginx:dev
+    ports:
+      - 1337:80
+    volumes:
+      - static_volume_dev:/dashboard/staticfiles
+      - media_volume_dev:/dashboard/media/development
+    depends_on:
+      - dashboard
+
+volumes:
+  static_volume_dev:
+  media_volume_dev:

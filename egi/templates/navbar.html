@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    {{ block.super }}
+{% endblock css %}
+
+{% block main %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a href="https://www.geochemistry.com.au">
+            <img style="width: 200px" src="{% static 'logo.png' %}" alt="EGI">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0" style='padding-left: 40px'>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
+                </li>
+                {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'create' %}">Create</a>
+                    </li>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">login</a>
+            {% endif %}
+        </div>
+    </nav>
+    {{ block.super }}
+{% endblock main %}

@@ -1,0 +1,98 @@
+.ui.grid > .column.data-column {
+    padding: 7px;
+}
+
+.ui.segment.data-header {
+    color: white;
+    text-align: center;
+    background-color: #424141;
+    font-size: 15px;
+    border-radius: .28571429rem;
+}
+
+.ui.modal {
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    overflow: auto;
+    outline: 0;
+}
+
+.ui.icon.button.management-help {
+    position: absolute;
+    right: 12px;
+    margin: 0;
+    bottom: 6px;
+}
+
+.eye.icon {
+    position: absolute;
+    right: 14px; /* padding size */
+    margin: 0;
+}
+
+.scroll {
+    overflow: auto;
+    height: calc(100vh - 85.22px - 14px - 51px - 14px); /* navbar, padding, header, padding */
+    max-height: calc(100vh - 85.22px - 14px - 51px - 14px); /* navbar, padding, header, padding */
+}
+
+.ui.segment.data-row:hover {
+    background-color: #424141;
+    color: white;
+}
+
+.ui.placeholder.segment.no-data {
+    height: calc(100vh - 87px - 14px - 51px - 14px); /* navbar, padding, header, padding */
+}
+
+.ui.icon.header {
+    position: absolute;
+    bottom: 70%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ui.button.filter {
+    position: absolute;
+    right: 14px; /* padding size */
+    margin: 0;
+    bottom: 11px;
+}
+
+.ui.top.right.flowing.popup {
+    left: -10px !important;
+}
+
+.ui.segments.scroll > .ui.segment.data-row {
+    border: 0 none white;
+}
+
+.add.icon {
+    position: absolute;
+    right: 14px; /* padding size */
+}
+
+.remove.icon {
+    position: absolute;
+    right: 14px; /* padding size */
+}
+
+#client-view {
+    position: relative;
+}
+
+.ui.segment.plot-container {
+    padding-left: 80px;
+    padding-right: 80px;
+}
+
+.circular.icon.angle.double.up.scroll-top {
+    background-color: #424141 !important;
+    position: fixed;
+    left: calc(100vw - 70px);
+    bottom: 17px;
+}

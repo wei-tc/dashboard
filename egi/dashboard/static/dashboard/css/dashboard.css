@@ -1,0 +1,37 @@
+#plot-grid {
+    margin-left: 15px;
+}
+
+#global-settings-instructions {
+    margin-top: 14px;
+}
+
+.ui.modal {
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    overflow: auto;
+    outline: 0;
+}
+
+.ui.button.form-help {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.plot-container.column {
+    padding: 0;
+}
+
+ /*>42px -> "mean+median+sd" radio is cut off. >37px -> horizontal scrollbar appears*/
+.plot-form.column {
+    padding: 0 37px;
+}
+
+.plot-form.segment {
+    overflow-y: auto;
+}
+
+

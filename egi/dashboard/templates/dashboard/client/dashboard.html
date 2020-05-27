@@ -1,0 +1,16 @@
+{% extends 'dashboard/base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/dashboard.css' %}">
+{% endblock css %}
+
+{% block main %}
+    {{ block.super }}
+    <div id="client-plots"></div>
+    {% render_bundle 'dashboard/bundles/client_view' %}
+{% endblock %}

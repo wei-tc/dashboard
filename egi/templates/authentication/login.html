@@ -1,0 +1,27 @@
+{% extends 'navbar.html' %}
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Nunito+Sans"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block title %}Login{% endblock %}
+
+{% block main %}
+    {{ block.super }}
+    <div class='container'>
+        <div class="login">
+            <h2 class='login-title'>L<span>o</span>gin</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button style="width: 250px" type="submit" class="btn btn-success">Login</button>
+            </form>
+            <p class='disclaimer'><br>By using this service, I consent to keep my username and password private. I
+                recognise that I am liable for any breach of
+                data arising from my sharing of these details</p>
+        </div>
+    </div>
+{% endblock %}

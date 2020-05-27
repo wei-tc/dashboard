@@ -1,0 +1,10 @@
+{% extends 'dashboard/base.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}Create Plot{% endblock %}
+
+{% block main %}
+    {{ block.super }}
+    <div id="plot-form"></div>
+    {% render_bundle 'dashboard/bundles/create' %}
+{% endblock %}

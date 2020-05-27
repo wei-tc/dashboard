@@ -1,0 +1,2 @@
+This folder cannot be empty. This is needed so that AWS EB creates the media folder, which is used for tmp files
+when uploading .xlsx and .xls datasets.

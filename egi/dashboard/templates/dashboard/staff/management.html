@@ -1,0 +1,16 @@
+{% extends 'dashboard/base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load static %}
+
+{% block title %}Dashboard Management{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/management.css' %}">
+{% endblock css %}
+
+{% block main %}
+    {{ block.super }}
+    <div id="management-form"></div>
+    {% render_bundle 'dashboard/bundles/management' %}
+{% endblock %}
