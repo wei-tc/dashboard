@@ -47,9 +47,6 @@ AWS_S3_OBJECT_PARAMETERS = {
     'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
     'CacheControl': 'max-age=94608000',
 }
-STATIC_LOCATION = 'staticfiles'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-STATICFILES_STORAGE = 'egi.storage_backends.StaticStorage'
 
 MEDIA_ROOT = 'media/production'
 MEDIA_LOCATION = 'media/production'
@@ -99,3 +96,9 @@ LOGGING = {
         },
     },
 }
+
+# LOCKOUT REVERSE-PROXY
+AXES_META_PRECEDENCE_ORDER = [
+   'HTTP_X_FORWARDED_FOR',
+   'REMOTE_ADDR',
+]

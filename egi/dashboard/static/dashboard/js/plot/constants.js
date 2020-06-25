@@ -96,7 +96,7 @@ export const removeSpaces = (str) => {
     return str.replace(/\s+/g, '');
 };
 
-export const VALID_HTML_ID_REGEX = new RegExp(/^[a-zA-Z][\w:-_]*$/);
+export const VALID_HTML_ID_REGEX = new RegExp(/^[a-zA-Z][\w:\-_]*$/);
 
 export const SAVE_MESSAGE_HEIGHT = 50;
 
