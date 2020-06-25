@@ -10,8 +10,6 @@ services:
     image: dashboard:dev
     volumes:
       - ./egi:/home/dashboard
-      - static_volume_dev:/dashboard/staticfiles
-      - media_volume_dev:/dashboard/media/development
     expose:
       - 8000
     env_file:
@@ -22,9 +20,6 @@ services:
     image: nginx:dev
     ports:
       - 1337:80
-    volumes:
-      - static_volume_dev:/dashboard/staticfiles
-      - media_volume_dev:/dashboard/media/development
     depends_on:
       - dashboard
 
