@@ -72,12 +72,24 @@ class Dataset(Model):
         self.file.file = open(TMP_CSV_PATH, 'rb')
         self.file.name = extension_to_csv(self.file.name)
 
-    def warn_if_mixed_data_types(self, request):
+    def warn_if_dataset_issue(self, request):
         df = pd.read_csv(self.file)
+        self.warn_if_mixed_data_types(df, request)
+        self.warn_if_missing_columns(df, request)
+
+    def warn_if_mixed_data_types(self, df, request):
         if df._is_mixed_type:
             messages.add_message(request, messages.WARNING,
                                  f"Dataset contains mixed data types in the following columns: "
                                  f"{list(df.select_dtypes(include='object').columns)}")
+
+    def warn_if_missing_columns(self, df, request):
+        actual_columns = set(df.columns)
+        expected_columns = {'Date', 'Location', 'Lat', 'Lon'}
+        if not expected_columns.issubset(actual_columns):
+            messages.add_message(request, messages.WARNING,
+                                 f"Dataset is missing the following columns: "
+                                 f"{expected_columns.difference(actual_columns)}")
 
     def __str__(self):
         return self.name

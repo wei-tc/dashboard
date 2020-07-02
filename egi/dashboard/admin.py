@@ -34,7 +34,8 @@ class ProxyDatasetAdmin(ModelAdmin):
         filename, extension = os.path.splitext(obj.file.name)
         obj.file.name = os.path.join(f'{form.cleaned_data["name"]}{extension}')
         obj.save()
-        obj.warn_if_mixed_data_types(request)
+
+        obj.warn_if_dataset_issue(request)
 
 
 @admin.register(ProxyIndustryStandard)

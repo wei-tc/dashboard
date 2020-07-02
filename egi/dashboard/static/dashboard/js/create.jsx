@@ -14,7 +14,7 @@ import {PlotTypeDropdown} from './components/forms/plot_type_dropdown';
 import {DatasetContext, SettingsContext} from './context';
 import {ALL_PLOTS_URL, DATASETS_URL, STANDARDS_URL} from "./api";
 
-const NAVBAR_HEIGHT = 85.22;
+const NAVBAR_HEIGHT = 88.84;
 const BUTTON_HEIGHT = 64;
 const BUTTON_PADDING = 14;
 const CONTAINER_MARGIN = 28;
@@ -22,7 +22,7 @@ const OTHER_ELEMENT_HEIGHTS = NAVBAR_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING;
 
 const SUCCESS = <Message positive floating header={'Plot Saved'}/>;
 const FAILURE = <Message negative floating
-                         content={'Plot failed to save. The chosen title has been taken. Try another title. Contact weitao.chi@gmail.com for assistance.'}/>;
+                         content={<p>Plot failed to save. The chosen title has been taken. Try another title. Contact <a href={"mailto:weitao.chi@gmail.com"}>weitao.chi@gmail.com</a> for assistance.</p>}/>;
 
 function CreatePlotForm() {
     const [message, setMessage] = useState(null);
@@ -102,7 +102,7 @@ function CreatePlotForm() {
                                                     setTimeFilter={setTimeFilter}
                                                     setTimeFilterRange={setTimeFilterRange}/>
                                 <SettingsContext.Provider
-                                    value={{settings: plotTypeSettings, setSettings: setPlotTypeSettings}}>
+                                    value={{settings: plotTypeSettings, setSettings: setPlotTypeSettings, clientView: false}}>
                                     <PlotSettingsForm type={type} disabled={disabled}/>
                                 </SettingsContext.Provider>
                             </DatasetContext.Provider>

@@ -32,8 +32,8 @@ export function IndustryStandardsDropdown(props) {
     return (
         <Form.Select
             id={CONSTANTS.INDUSTRY_STANDARDS_FORM}
-            label={'Industry Standards'}
-            placeholder={'Industry Standards'}
+            label={'Guidelines'}
+            placeholder={'Guidelines'}
             options={fetchedStandards}
             disabled={props.disabled}
             onChange={handleChange}

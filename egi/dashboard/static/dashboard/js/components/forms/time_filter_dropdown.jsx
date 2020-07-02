@@ -5,7 +5,7 @@ import {CONSTANTS} from '../../plot/constants';
 import PropTypes from 'prop-types';
 import {
     handleDropdownChange,
-    setDefaultFromSettingsIfAny, toOptions
+    setDefaultFromSettingsIfAny, toDropdownOptions
 } from "./plot_settings_forms/plot_settings_helpers";
 import {DatasetContext} from "../../context";
 
@@ -21,13 +21,14 @@ const TO_ELEMENT = {
     [YEAR_RANGE]: CONSTANTS.YEAR_RANGE,
     [MONTH_RANGE]: CONSTANTS.MONTH_RANGE,
     [DATE_RANGE]: CONSTANTS.DATE_RANGE,
+    '': ''
 };
 
 const TO_DISPLAYABLE = {
     [CONSTANTS.YEAR_SELECT]: YEAR_SELECT,
     [CONSTANTS.YEAR_RANGE]: YEAR_RANGE,
     [CONSTANTS.MONTH_RANGE]: MONTH_RANGE,
-    [CONSTANTS.DATE_RANGE] : DATE_RANGE,
+    [CONSTANTS.DATE_RANGE]: DATE_RANGE,
 };
 
 export function TimeFilterDropdown(props) {
@@ -36,43 +37,54 @@ export function TimeFilterDropdown(props) {
     const [filter, setFilter] = useState('');
     const [start, setStart] = useState('');
     const [end, setEnd] = useState('');
-
+    const [timeOptions, setTimeOptions] = useState(sortUniqueByAscendingOptions(data[timeUnit(TO_ELEMENT[filter])]));
+    const [initialRender, setInitialRender] = useState(true);
     const handleDropdownChangeBy = useCallback((setDropdown, _setSettings) => handleDropdownChange(setDropdown, _setSettings),
         []);
 
-    const handleFilterChange = useCallback((e, selected) => {
+    const handleFilterChange = useCallback((dataset) => (e, selected) => {
         setFilter(selected.value);
         setStart('');
         setEnd('');
-        props.setTimeFilter(selected.value.length === 0 ? '' : TO_ELEMENT[selected.value]);
-        props.setTimeFilterRange({})
+        setTimeOptions(sortUniqueByAscendingOptions(dataset[timeUnit(TO_ELEMENT[selected.value])]));
+        props.setTimeFilter(TO_ELEMENT[selected.value]);
+        props.setTimeFilterRange({[CONSTANTS.TIME_FILTER_START]: '', [CONSTANTS.TIME_FILTER_END]: ''})
     }, []);
 
     const handleYearSelect = useCallback((e, selected) => {
             setStart(selected.value);
-            props.setTimeFilterRange(prevSettings => ({
-                ...prevSettings,
+            setEnd(selected.value);
+            props.setTimeFilterRange({
                 [CONSTANTS.TIME_FILTER_START]: selected.value,
                 [CONSTANTS.TIME_FILTER_END]: selected.value
-            }));
+            });
         },
         []);
 
     useEffect(() => {
-        handleFilterChange(null, {value: hasDefaults ? TO_DISPLAYABLE[props.timeFilter] : ''});
+        handleFilterChange(data)(null, {value: hasDefaults ? TO_DISPLAYABLE[props.timeFilter] : ''});
         handleDropdownChangeBy(setStart, props.setTimeFilterRange)(...setDefaultFromSettingsIfAny(CONSTANTS.TIME_FILTER_START, hasDefaults, props.timeFilterRange));
         handleDropdownChangeBy(setEnd, props.setTimeFilterRange)(...setDefaultFromSettingsIfAny(CONSTANTS.TIME_FILTER_END, hasDefaults, props.timeFilterRange));
 
         return () => {
-            props.setTimeFilter('');
-            props.setTimeFilterRange({});
+            setFilter('');
             setStart('');
             setEnd('');
+            setTimeOptions([]);
         }
     }, [name]);
 
-    const timeCol = timeUnit(props.timeFilter);
-    const options = RANGE_TIME_UNITS.has(props.timeFilter) ? sortUniqueByAscendingOptions(data[timeCol]) : null;
+    useEffect(() => {
+        if (!initialRender && !props.disabled) {
+            props.setTimeFilter(TO_ELEMENT[filter]);
+            props.setTimeFilterRange({
+                [CONSTANTS.TIME_FILTER_START]: start,
+                [CONSTANTS.TIME_FILTER_END]: end
+            });
+        } else if (initialRender) {
+            setInitialRender(false);
+        }
+    }, [props.disabled]);
 
     return (
         <>
@@ -81,29 +93,29 @@ export function TimeFilterDropdown(props) {
                 label={'Filter by Time (Optional)'}
                 placeholder={'Filter by Time (Optional)'}
                 value={filter}
-                options={toOptions([YEAR_SELECT, YEAR_RANGE, MONTH_RANGE, DATE_RANGE])}
-                onChange={handleFilterChange}
+                options={toDropdownOptions([YEAR_SELECT, YEAR_RANGE, MONTH_RANGE, DATE_RANGE])}
+                onChange={handleFilterChange(data)}
                 disabled={props.disabled}
                 fluid clearable search
             />
-            {props.timeFilter === CONSTANTS.YEAR_SELECT &&
+            {TO_ELEMENT[filter] === CONSTANTS.YEAR_SELECT &&
             <Form.Select
                 id={CONSTANTS.YEAR_SELECT}
-                label={timeCol}
+                label={'Year'}
                 placeholder={'Year'}
                 value={start}
-                options={sortUniqueByAscendingOptions(data[timeCol])}
+                options={timeOptions}
                 onChange={handleYearSelect}
                 disabled={props.disabled}
                 fluid search clearable
             />}
-            {RANGE_TIME_UNITS.has(props.timeFilter) &&
+            {RANGE_TIME_UNITS.has(TO_ELEMENT[filter]) &&
             <>
                 <Form.Select
                     id={CONSTANTS.TIME_FILTER_START}
-                    label={timeCol}
+                    label={timeUnit(TO_ELEMENT[filter])}
                     placeholder={'Start (Inclusive)'}
-                    options={options}
+                    options={timeOptions}
                     value={start}
                     onChange={handleDropdownChangeBy(setStart, props.setTimeFilterRange)}
                     disabled={props.disabled}
@@ -112,7 +124,7 @@ export function TimeFilterDropdown(props) {
                 <Form.Select
                     id={CONSTANTS.TIME_FILTER_END}
                     placeholder={'End (Inclusive)'}
-                    options={options}
+                    options={timeOptions}
                     value={end}
                     onChange={handleDropdownChangeBy(setEnd, props.setTimeFilterRange)}
                     disabled={props.disabled}

@@ -2,11 +2,11 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {CONSTANTS} from "../../../plot/constants";
 import {Form} from "semantic-ui-react";
 import {
-    getDefaultFromOptionsIfAny,
+    getDefaultFromDropdownOptionsIfAny,
     handleDropdownChange,
     setDefaultFromSettingsIfAny,
-    setDefaultFromSettingsOrOptionsIfAny,
-    toOptions,
+    setDefaultFromSettingsOrDropdownOptionsIfAny,
+    toDropdownOptions,
     toSelectedOptions
 } from "./plot_settings_helpers";
 import {isObjEmpty} from "../../../data/transform";
@@ -21,11 +21,11 @@ export const STACKED_BAR_IS_SAVEABLE = settings => settings[CONSTANTS.STACKEDBAR
         && settings[CONSTANTS.AGGREGATION_TYPE]);
 
 const STACKED_BAR_TYPE = toSelectedOptions(['Categorical', 'Numerical'], 'Categorical');
-const AGGREGATION_TYPE = toOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
+const AGGREGATION_TYPE = toDropdownOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
 
 export const StackedBarSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
@@ -35,11 +35,11 @@ export const StackedBarSettings = (props) => {
     const [barType, setBarType] = useState('');
 
     useEffect(() => {
-        const options = toOptions(Object.keys(data));
+        const options = toDropdownOptions(Object.keys(data));
         setColumns(options);
 
-        handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.STACKEDBAR_X_FORM, hasDefaults, settings, getDefaultFromOptionsIfAny(['Location', 'location'], options)));
-        handleDropdownChangeBy(setBarType, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.STACKEDBAR_TYPE_FORM, hasDefaults, settings, STACKED_BAR_TYPE.default));
+        handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.STACKEDBAR_X_FORM, hasDefaults, settings, getDefaultFromDropdownOptionsIfAny(['Location', 'location'], options)));
+        handleDropdownChangeBy(setBarType, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.STACKEDBAR_TYPE_FORM, hasDefaults, settings, STACKED_BAR_TYPE.default));
         handleDropdownChangeBy(setY, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.STACKEDBAR_Y_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setAgg, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.AGGREGATION_TYPE, hasDefaults, settings));
 

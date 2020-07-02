@@ -52,10 +52,8 @@ export function ManagementHelp() {
                         </Table>
                         <br/>
                         If you have issues or would like more functionality, feel free to contact David at&nbsp;
-                        <a href={"mailto:david.faulkner@geochemistry.com.au"}>david.faulkner@geochemistry.com.au</a>.
+                        <a href={"mailto:weitao.chi@geochemistry.com.au"}>weitao.chi@gmail.com</a>.
                         Please note that response times may vary.
-                        <br/>
-                        David's primary role is not support for this application.
                     </Modal.Description>
                 </Modal.Content>
             </Modal>

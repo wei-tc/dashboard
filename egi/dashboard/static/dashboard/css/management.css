@@ -1,12 +1,16 @@
+.ui.grid {
+    padding-bottom: 7px;
+}
+
 .ui.grid > .column.data-column {
-    padding: 7px;
+    padding: 7px 7px 0;
 }
 
 .ui.segment.data-header {
     color: white;
     text-align: center;
     background-color: #424141;
-    font-size: 15px;
+    font-size: 1.07142857143rem;
     border-radius: .28571429rem;
 }
 
@@ -21,30 +25,72 @@
 
 .ui.icon.button.management-help {
     position: absolute;
-    right: 12px;
+    right: 8px;
     margin: 0;
     bottom: 6px;
 }
 
-.eye.icon {
+.ui.button.preview {
     position: absolute;
-    right: 14px; /* padding size */
+    right: 10px; /* padding size */
+    margin: 0;
+    bottom: 10px
+}
+
+.ui.button.loading.loading.loading.loading.loading.loading.preview {
+    position: absolute;
+    right: 10px; /* padding size */
+    margin: 0;
+    bottom: 10px
+}
+
+.ui.scroll {
+    overflow: auto;
+    height: calc(100vh - 88.84px - 1rem - 51px - 1rem); /* navbar, padding, header, padding */
+    max-height: calc(100vh - 88.84px - 1rem - 51px - 1rem); /* navbar, padding, header, padding */
+    box-shadow: 0 0;
+}
+
+.ui.segments.scroll > .ui.segment.data-row {
+    border: 0 none white;
+    border-radius: 0;
+}
+
+.ui.segments.scroll > .ui.menu.data-row {
+    border: 0 none white;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: 0 0;
+}
+
+.ui.menu.data-row {
+    min-height: 3.357142857142857rem;
+}
+
+.ui.menu.data-row > .item {
+    padding: 1rem;
+}
+
+.ui.menu.data-row > .item.add,
+.ui.menu.data-row > .item.remove {
+    padding: 1rem;
+    border-radius: .28571429rem;
+}
+
+.ui.menu.data-row > .item.add > .add.icon,
+.ui.menu.data-row > .item.remove > .remove.icon {
     margin: 0;
 }
 
-.scroll {
-    overflow: auto;
-    height: calc(100vh - 85.22px - 14px - 51px - 14px); /* navbar, padding, header, padding */
-    max-height: calc(100vh - 85.22px - 14px - 51px - 14px); /* navbar, padding, header, padding */
-}
-
-.ui.segment.data-row:hover {
+.ui.segment.data-row:hover,
+.ui.menu.data-row > .item.remove:hover,
+.ui.menu.data-row > .item.add:hover {
     background-color: #424141;
     color: white;
 }
 
 .ui.placeholder.segment.no-data {
-    height: calc(100vh - 87px - 14px - 51px - 14px); /* navbar, padding, header, padding */
+    height: calc(100vh - 88.84px - 1rem - 51px - 1.5rem); /* navbar, padding, header, padding */
 }
 
 .ui.icon.header {
@@ -58,41 +104,40 @@
 
 .ui.button.filter {
     position: absolute;
-    right: 14px; /* padding size */
+    right: 10px; /* padding size */
     margin: 0;
-    bottom: 11px;
+    bottom: 10px;
 }
 
 .ui.top.right.flowing.popup {
     left: -10px !important;
 }
 
-.ui.segments.scroll > .ui.segment.data-row {
-    border: 0 none white;
-}
-
-.add.icon {
-    position: absolute;
-    right: 14px; /* padding size */
-}
-
-.remove.icon {
-    position: absolute;
-    right: 14px; /* padding size */
-}
-
 #client-view {
     position: relative;
+}
+
+.ui.horizontal.divider.plot-container {
+    margin-top: 6px;
 }
 
 .ui.segment.plot-container {
     padding-left: 80px;
     padding-right: 80px;
+    margin-bottom: 0;
+    border-radius: 0;
 }
 
-.circular.icon.angle.double.up.scroll-top {
-    background-color: #424141 !important;
+.circular.icon.scroll-top {
+    display: block;
     position: fixed;
     left: calc(100vw - 70px);
     bottom: 17px;
+    background-color: #424141;
+    color: white;
+}
+
+.circular.icon.scroll-top:hover {
+    background-color: rgba(36, 39, 45, 1);
+    color: white;
 }

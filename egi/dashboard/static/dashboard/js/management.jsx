@@ -1,6 +1,6 @@
 import {render} from "react-dom";
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, Divider, Form, Grid, Header, Icon, Popup, Segment} from "semantic-ui-react";
+import {Button, Divider, Form, Grid, Header, Icon, Menu, Popup, Segment} from "semantic-ui-react";
 import {
     filterStandardsBySelected,
     patchPlot,
@@ -20,6 +20,7 @@ function ManagementForm() {
     const [selectedUser, setSelectedUser] = useState('');
     const [userPlotNames, setUserPlotNames] = useState([]);
     const [preview, setPreview] = useState([]);
+    const [previewLoading, setPreviewLoading] = useState(false);
     const previewContainer = useRef(null);
 
     const [allPlots, setAllPlots] = useState([]);
@@ -54,7 +55,8 @@ function ManagementForm() {
             const plotNames = allUserPlotData[username].plot.map(p => p.name);
             setUserPlotNames(sortAlphanumerically(plotNames));
         }
-        setPreview(false);
+        setPreview([]);
+        setPreviewLoading(false);
     }, [allUserPlotData, selectedUser]);
 
     useEffect(() => {
@@ -89,6 +91,7 @@ function ManagementForm() {
         setUserPlotNames(sortAlphanumerically(updatedUserPlotData.map(p => p.name)));
         updateUserPlotData(updatedUserPlotData);
         setPreview([]);
+        setPreviewLoading(false);
     }, [userPlotNames, selectedUser, updateUserPlotData]);
 
     const handleAddClick = useCallback((plotName) => async (e, selected) => {
@@ -106,6 +109,7 @@ function ManagementForm() {
         setUserPlotNames(sortAlphanumerically(updatedUserPlotData.map(p => p.name)));
         updateUserPlotData(updatedUserPlotData);
         setPreview([]);
+        setPreviewLoading(false);
     }, [userPlotNames, selectedUser, updateUserPlotData]);
 
     const handleFilter = useCallback((e, datasets) => {
@@ -131,26 +135,19 @@ function ManagementForm() {
         }));
     };
 
-    const handlePreview = useCallback(async (e, selected) => {
-        if (selectedUser.length === 0) {
-            return;
-        }
-        if (preview.length > 0) {
-            scrollDown();
-            return;
-        }
-
-        const plotData = allUserPlotData[selectedUser].plot;
+    const loadPreview = useCallback(async () => {
+        let plotData = allUserPlotData[selectedUser].plot;
 
         const datasets = fetchAllDatasets(DATASETS_URL, plotData);
         const allStandards = await fetchStandards(STANDARDS_URL);
 
-        const previewPlots = [];
+        plotData = sortAlphanumerically(plotData, 'name');
 
-        for (let p = plotData.length - 1; p >= 0; p--) {
+        const previewPlots = [];
+        for (let p = 0; p < plotData.length; p++) {
             const plot = plotData[p];
             const plotStandards = plot[CONSTANTS.SETTINGS][CONSTANTS.INDUSTRY_STANDARDS_FORM];
-            const standards = filterStandardsBySelected(await allStandards, plotStandards);
+            const standards = filterStandardsBySelected(allStandards, plotStandards);
             const fetchedDataset = await datasets[plot.dataset];
 
             previewPlots.push({
@@ -163,11 +160,21 @@ function ManagementForm() {
         }
 
         setPreview(previewPlots);
+        setPreviewLoading(false);
     }, [selectedUser, preview, scrollDown, allUserPlotData]);
 
+    const handlePreview = useCallback((e, selected) => {
+        if (preview.length === 0) {
+            setPreviewLoading(true);
+            loadPreview()
+        } else {
+            scrollDown();
+        }
+    }, [preview, loadPreview, scrollDown]);
+
     const scrollDown = useCallback(() => {
-        window.scrollTo({top: previewContainer.current.offsetTop, left: 0, behavior: 'smooth'})
-    }, []);
+        window.scrollTo({top: previewContainer.current.offsetTop - 14, left: 0, behavior: 'smooth'})
+    }, [previewContainer]);
 
     useEffect(() => {
         if (preview.length > 0) {
@@ -190,7 +197,7 @@ function ManagementForm() {
                 scrollTop.css('position', 'relative');
                 scrollTop.css('bottom', '17px');
             } else {
-                scrollTop.css('position', 'sticky');
+                scrollTop.css('position', 'fixed');
                 scrollTop.css('position', '-webkit-sticky');
             }
         });
@@ -199,7 +206,7 @@ function ManagementForm() {
     return (
         <>
             <Grid columns={'equal'} padded>
-                <Grid.Column className={'data-column'}>
+                <Grid.Column className={'data-column'} mobile={3} tablet={3} computer={5}>
                     <Segment className={'data-header'} attached={'top'}>
                         Users<ManagementHelp/>
                     </Segment>
@@ -215,9 +222,13 @@ function ManagementForm() {
                     </Segment.Group>
                 </Grid.Column>
 
-                <Grid.Column className={'data-column'}>
+                <Grid.Column className={'data-column'} mobile={7} tablet={7} computer={6}>
                     <Segment className={'data-header'} attached={'top'}>
-                        Allocated Plots<Icon name={'eye'} onClick={handlePreview}/>
+                        Allocated Plots<Button className={'preview'} icon={'eye'} content={'Preview'}
+                                               loading={previewLoading} compact
+                                               size={'small'} onClick={handlePreview}
+                                               disabled={userPlotNames.length === 0}
+                                               active={preview.length > 0} color={preview.length > 0 ? 'olive' : null}/>
                     </Segment>
                     <Segment.Group className={'scroll'} attached={'bottom'}>
                         {userPlotNames.length === 0 && <Segment className={'no-data'} placeholder>
@@ -227,19 +238,26 @@ function ManagementForm() {
                         </Segment>}
 
                         {userPlotNames.map(name => (
-                            <Segment className={'data-row'}
-                                     key={`${selectedUser}-${name}`}>
-                                {name}<Icon name={'remove'}
-                                            onClick={handleRemoveClick(name)}/>
-                            </Segment>))}
+                            <Menu className={'data-row'}
+                                  key={`${selectedUser}-${name}`}
+                                  fluid
+                                  size={'huge'}
+                                  borderless>
+                                <Menu.Item className={'remove'}
+                                    onClick={handleRemoveClick(name)}>
+                                    <Icon name={'remove'}/>
+                                </Menu.Item>
+                                <Menu.Item name={name} active={false} content={name}/>
+                            </Menu>))}
                     </Segment.Group>
                 </Grid.Column>
 
-                <Grid.Column className={'data-column'}>
+                <Grid.Column className={'data-column'} mobile={6} tablet={6} computer={5}>
                     <Segment className={'data-header'} attached={'top'}>
                         All Plots
                         <Popup flowing position={'top right'}
-                               trigger={<Button className={'filter'} toggle compact size={'small'}>Filter</Button>}
+                               trigger={<Button className={'filter'} icon={'filter'} content={'Filter'} toggle compact
+                                                size={'small'}/>}
                                on={'click'}>
                             <Form.Select
                                 placeholder={'Filter by dataset name'}
@@ -264,32 +282,39 @@ function ManagementForm() {
                         </Segment>}
 
                         {filteredPlotNames.map(name => (
-                            <Segment className={'data-row'}
-                                     key={name}>
-                                {name}<Icon name={'add'}
-                                            onClick={handleAddClick(name)}/>
-                            </Segment>))}
+                            <Menu className={'data-row'}
+                                  key={`${name}`}
+                                  fluid
+                                  size={'huge'}
+                                  borderless>
+                                <Menu.Item className={'add'}
+                                    onClick={handleAddClick(name)}>
+                                    <Icon name={'add'}/>
+                                </Menu.Item>
+                                <Menu.Item name={name} active={false} content={name}/>
+                            </Menu>))}
                     </Segment.Group>
                 </Grid.Column>
             </Grid>
 
-            <div ref={previewContainer} id='client-view'/>
-            {preview.length > 0 && <Divider horizontal><Header>PREVIEW</Header></Divider>}
-            {preview.length > 0 && preview.map(p => (
-                <Segment className={'plot-container'} key={p.title} attached={'bottom'}>
-                    <Plot
-                        title={p.title}
-                        standards={p.standards}
-                        dataset={p.dataset}
-                        type={p.type}
-                        settings={p.settings}
-                        displayable={true}/>
-                </Segment>
-            ))}
-            {preview.length > 0 && <Icon id={'scroll-top'} className={'scroll-top'}
-                                         inverted color={'olive'}
-                                         circular name={'angle double up'} size={'large'}
-                                         onClick={scrollUp}/>}
+            <div ref={previewContainer} id='client-view'>
+                {preview.length > 0 && <Divider horizontal><Header>PREVIEW</Header></Divider>}
+                {preview.length > 0 && preview.map(p => (
+                    <Segment className={'plot-container'} key={p.title} attached={'bottom'}>
+                        <Plot
+                            title={p.title}
+                            standards={p.standards}
+                            dataset={p.dataset}
+                            type={p.type}
+                            settings={p.settings}
+                            displayable={true}/>
+                    </Segment>
+                ))}
+                {preview.length > 0 &&
+                <Button id={'scroll-top'} className={'scroll-top'} icon circular size={'large'} onClick={scrollUp}>
+                    <Icon name={'angle double up'}/>
+                </Button>}
+            </div>
         </>
     );
 }

@@ -1,8 +1,8 @@
 import {ALL_PLOT_TYPES} from '../../../plot/render';
 
-export const PLOT_TYPE_OPTIONS = toOptions(ALL_PLOT_TYPES);
+export const PLOT_TYPE_OPTIONS = toDropdownOptions(ALL_PLOT_TYPES);
 
-export function toOptions(options) {
+export function toDropdownOptions(options) {
     if (options === null || options === undefined) {
         return [];
     }
@@ -13,7 +13,7 @@ export function toOptions(options) {
     }));
 }
 
-export const toSelectedOptions = (options, selected) => ({options: toOptions(options), default: selected});
+export const toSelectedOptions = (options, selected) => ({options: toDropdownOptions(options), default: selected});
 
 export const getDefaultIfAny = (defaults, settings, element) => {
     return defaults ? settings[element] : null;
@@ -38,7 +38,7 @@ export const setDefaultFromSettingsIfAny = (id, hasDefaults, settings) => {
  * @param options string | null | [] if plot parameter is multiple (e.g., box plot groups)
  * @returns {[null, {id: *, value: (string)}]}
  */
-export const setDefaultFromSettingsOrOptionsIfAny = (id, hasDefaults, settings, options) => {
+export const setDefaultFromSettingsOrDropdownOptionsIfAny = (id, hasDefaults, settings, options) => {
     return [
         null,
         {
@@ -50,7 +50,7 @@ export const setDefaultFromSettingsOrOptionsIfAny = (id, hasDefaults, settings, 
     ];
 };
 
-export const getDefaultFromOptionsIfAny = (defaults, options) => {
+export const getDefaultFromDropdownOptionsIfAny = (defaults, options) => {
     for (let o of options) {
         const def = defaults.find(d => d === o.value);
 
@@ -65,19 +65,21 @@ export const getDefaultFromOptionsIfAny = (defaults, options) => {
 export const handleDropdownChange = (setDropdown, setSettings) => {
     return (e, selected) => {
         setDropdown(selected.value);
-        updateDropdownSettings(setSettings, selected);
+        updateSettingsFromDropdown(setSettings, selected);
     }
 };
 
-export const handleDropdownChangeWithDependency = (setDropdown, setSettings, dependency) => {
+export const handleDropdownChangeWithDependencies = (setDropdown, setSettings, dependencies) => {
     return (e, selected) => {
         setDropdown(selected.value);
-        updateDropdownSettings(setSettings, selected);
-        dependency(selected);
+        updateSettingsFromDropdown(setSettings, selected);
+        for (let d of dependencies) {
+            d(selected);
+        }
     }
 };
 
-export const updateDropdownSettings = (setSettings, selected) => {
+export const updateSettingsFromDropdown = (setSettings, selected) => {
     setSettings(prevSettings => ({
         ...prevSettings,
         [selected.id]: selected.value

@@ -3,7 +3,6 @@ import {filterByIdx, groupToColor, idxByGroup, max, sortPlotDataAlphanumerically
 import {
     addStandardTracesIfAny,
     MARKER_OUTLINE,
-    plot_height,
     PLOT_MARGIN
 } from "../render";
 
@@ -29,7 +28,6 @@ export const renderScatter = (plot, dataset, standards) => {
             itemsizing: 'constant',
         },
         ...PLOT_MARGIN,
-        height: plot_height
     };
 
     if (groupBy || markers === SCATTER.CATEGORY) {

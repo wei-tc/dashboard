@@ -1,74 +1,44 @@
-*{
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    font-size: 14px;
-    overflow: hidden;
+.ui.container.login-form {
+    width: 40vw;
 }
 
-.login-title {
-    margin-bottom: 5%;
+.ui.container.login-form,
+.ui.segment.login-form,
+.ui.warning.message.disclaimer
+{
+    top: 7vh;
+}
+
+.ui.message.login-error {
+    top: 4vh;
+}
+
+.ui.segment.login-form {
+    box-shadow: none;
+}
+
+.ui.header.login-title {
+    margin: 0;
     font-family: Nunito Sans, 'Arial Black', sans-serif;
     font-weight: bold;
     font-size: 60px;
     color: #424141;
     letter-spacing: 1px;
-
 }
-.login-title span {
-    margin-bottom: 5%;
+
+.ui.header.login-title span {
     font-family: Nunito Sans, 'Arial Black', sans-serif;
     font-weight: bold;
     font-size: 60px;
     color: #d5d803;
-
 }
 
-.btn-success {
+.ui.button.login {
     background-color: #424141;
-    border-color: #424141;
+    color: white;
 }
 
-.login {
-    width: 50%;
-
-    padding-top: 5%;
-    top: 10%;
-    height: 450px;
-    margin: 5% auto;
-    background-color: #f9f9f9;
-    text-align: center;
-    z-index: 999999;
-    -webkit-box-shadow: 1px 9px 15px 2px rgba(0,0,0,0.36);
-    -moz-box-shadow: 1px 9px 15px 2px rgba(0,0,0,0.36);
-    box-shadow: 1px 9px 15px 2px rgba(0,0,0,0.36);
-}
-
-.disclaimer {
-    padding: 15px;
-    margin: 10px;
-    font-size: 10px;
-}
-
-.navbar {
-    min-height: 90px;
-    min-width: 100vw;
-    background-color: #323e48;
-}
-
-.logo {
-    width: 100px;
-    height:50px;
-}
-
-
-.errorlist {
-    font-size: 12px;
-}
-
-label{
-    display: inline;
-}
-
-input {
-    display: inline;
-
+.ui.button.login:hover {
+    background-color: rgba(36, 39, 45, 1);
+    color: white;
 }

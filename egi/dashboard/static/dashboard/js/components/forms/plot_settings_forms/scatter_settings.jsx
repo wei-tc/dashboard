@@ -2,8 +2,8 @@ import {CONSTANTS, SCATTER} from "../../../plot/constants";
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Form} from "semantic-ui-react";
 import {
-    handleDropdownChange, setDefaultFromSettingsIfAny, setDefaultFromSettingsOrOptionsIfAny,
-    toOptions,
+    handleDropdownChange, setDefaultFromSettingsIfAny, setDefaultFromSettingsOrDropdownOptionsIfAny,
+    toDropdownOptions,
     toSelectedOptions,
     handleRadioChange
 } from "./plot_settings_helpers";
@@ -20,7 +20,7 @@ const MARKERS = toSelectedOptions([SCATTER.MARKER, SCATTER.SCALED, SCATTER.CATEG
 
 export const ScatterSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
@@ -34,11 +34,11 @@ export const ScatterSettings = (props) => {
     const [groupBy, setGroupBy] = useState('');
 
     useEffect(() => {
-        setColumns(toOptions(Object.keys(data)));
+        setColumns(toDropdownOptions(Object.keys(data)));
 
         handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.SCATTER_X_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setY, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.SCATTER_Y_FORM, hasDefaults, settings));
-        handleDropdownChangeBy(setMarkerType, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.SCATTER_MARKERS_FORM, hasDefaults, settings, MARKERS.default));
+        handleDropdownChangeBy(setMarkerType, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.SCATTER_MARKERS_FORM, hasDefaults, settings, MARKERS.default));
         handleDropdownChangeBy(setSize, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.SCATTER_SIZE_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setCategory, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.SCATTER_CATEGORY_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setGroupBy, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.SCATTER_GROUPBY_FORM, hasDefaults, settings));

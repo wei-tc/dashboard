@@ -3,9 +3,9 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Form} from "semantic-ui-react";
 import {
     handleDropdownChange,
-    toOptions,
+    toDropdownOptions,
     handleRadioChange,
-    setDefaultFromSettingsIfAny
+    setDefaultFromSettingsIfAny, updateSettingsFromDropdown, updateDropdownSettings
 } from "./plot_settings_helpers";
 import {isObjEmpty} from "../../../data/transform";
 import PropTypes from "prop-types";
@@ -16,30 +16,29 @@ export const TIMESERIES_IS_SAVEABLE = settings => settings[CONSTANTS.TIMESERIES_
     && settings[CONSTANTS.TIMESERIES_Y_SCALE_FORM]
     && settings[CONSTANTS.AGGREGATION_TYPE];
 
-const AGGREGATION_TYPE = toOptions(['None', 'Max', 'Min', 'Mean', 'Median']);
+const AGGREGATION_TYPE = toDropdownOptions(['None', 'Max', 'Min', 'Mean', 'Median']);
 
 export const TimeSeriesSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
     const [x, setX] = useState('');
     const [y, setY] = useState('');
     const [yScale, setYScale] = useState(hasDefaults ? settings[CONSTANTS.TIMESERIES_Y_SCALE_FORM] : 'linear');
-    const [agg, setAgg] = useState('');
     const [groupBy, setGroupBy] = useState('');
 
     useEffect(() => {
-        setColumns(toOptions(Object.keys(data)));
+        setColumns(toDropdownOptions(Object.keys(data)));
 
         handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.TIMESERIES_X_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setY, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.TIMESERIES_Y_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setGroupBy, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.TIMESERIES_GROUPBY_FORM, hasDefaults, settings));
-        handleDropdownChangeBy(setAgg, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.AGGREGATION_TYPE, hasDefaults, settings));
 
         setSettings(s => ({
             ...s,
+            [CONSTANTS.AGGREGATION_TYPE]: 'None',
             [CONSTANTS.TIMESERIES_Y_SCALE_FORM]: yScale
         }));
 
@@ -48,7 +47,6 @@ export const TimeSeriesSettings = (props) => {
             setY('');
             setYScale('linear');
             setGroupBy('');
-            setAgg('');
         }
     }, [name]);
 
@@ -104,16 +102,6 @@ export const TimeSeriesSettings = (props) => {
                 disabled={props.disabled}
                 onChange={handleDropdownChangeBy(setGroupBy, setSettings)}
                 fluid clearable search
-            />
-            <Form.Select
-                id={CONSTANTS.AGGREGATION_TYPE}
-                label={'Aggregation Type'}
-                placeholder={'If there are two or more measurements on the same date, aggregate by:'}
-                options={AGGREGATION_TYPE}
-                value={agg}
-                disabled={props.disabled}
-                onChange={handleDropdownChangeBy(setAgg, setSettings)}
-                fluid
             />
         </>
     );

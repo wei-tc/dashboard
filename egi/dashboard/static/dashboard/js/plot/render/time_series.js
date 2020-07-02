@@ -6,7 +6,7 @@ import {
     reduceArrayByType,
     sortPlotDataAlphanumericallyByName
 } from "../../data/transform";
-import {addStandardTracesIfAny, plot_height, PLOT_MARGIN} from "../render";
+import {addStandardTracesIfAny, PLOT_MARGIN} from "../render";
 
 export const renderTimeSeries = (plot, dataset, standards) => {
     const settings = plot[CONSTANTS.SETTINGS];
@@ -24,7 +24,6 @@ export const renderTimeSeries = (plot, dataset, standards) => {
         yaxis: {title: y, type: yScale, automargin: true},
         showlegend: true,
         ...PLOT_MARGIN,
-        height: plot_height
     };
 
     sortPlotDataAlphanumericallyByName(data);

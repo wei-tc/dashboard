@@ -7,6 +7,7 @@ import {TimeFilterDropdown} from './forms/time_filter_dropdown';
 import {IndustryStandardsDropdown} from "./forms/industry_standards_dropdown";
 import {GlobalSettingsHelp} from "./help/global_settings";
 import {DatasetContext} from "../context";
+import {CONSTANTS} from "../plot/constants";
 
 const INSTRUCTIONS = <p>
     Global settings override the corresponding settings for all plots in this tab.<br/>
@@ -35,7 +36,7 @@ export function TabView(props) {
     // dataset-plots is 1-M relationship
     return (
         <>
-            <Segment raised>
+            <Segment className={'global-settings'}>
                 <Grid>
                     <Grid.Column floated='left' width={5}>
                         <Radio toggle label={'Global Settings'} onChange={handleTabDropdowns}/>
@@ -57,6 +58,7 @@ export function TabView(props) {
             </Segment>
             < Grid
                 id={'plot-grid'}
+                divided={'vertically'}
                 stackable>
                 {
                     props.propsOfPlots.map(p => <ClientPlot key={p.title}
@@ -65,7 +67,8 @@ export function TabView(props) {
                                                             tabStandards={tabStandards}
                                                             tabColumnFilter={tabColumnFilter}
                                                             tabTimeFilter={tabTimeFilter}
-                                                            tabTimeFilterRange={tabTimeFilterRange}/>)
+                                                            tabTimeFilterRange={tabTimeFilterRange}
+                                                            hasGlobal={displayTabDropdowns}/>)
                 }
             </Grid>
         </>

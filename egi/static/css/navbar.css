@@ -1,0 +1,12 @@
+.ui.icon.menu.navbar {
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0 0;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+.ui.menu.navbar > .right.menu > .item.link-button,
+.ui.menu.navbar > .item.link-button {
+    padding-top: 22px;
+}

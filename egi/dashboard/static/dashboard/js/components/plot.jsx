@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {
     CONSTANTS, PLOT_TYPES,
     plotContainerId,
@@ -28,9 +28,11 @@ export function Plot(props) {
                 [CONSTANTS.SETTINGS]: props.settings,
             };
 
-            renderPlot(plotData, {...props.dataset.data}, props.standards, props.height);
+            renderPlot(plotData, {...props.dataset.data}, props.standards, props.height, props.width);
         }
-    }, [props.height, props.title, props.dataset, props.standards, props.type, props.displayable, props.settings]);
+    }, [props.width, props.height, props.title, props.dataset, props.standards, props.type, props.displayable, props.settings]);
+
+
 
     return (
         <>
@@ -46,10 +48,9 @@ Plot.propTypes = {
     standards: PropTypes.object.isRequired,
     type: PropTypes.oneOf(ALL_PLOT_TYPES.concat([''])).isRequired,
     settings: PropTypes.object.isRequired,
-    displayable: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.bool]).isRequired,
-    height: PropTypes.number
+    displayable: PropTypes.bool.isRequired,
+    height: PropTypes.number,
+    width: PropTypes.number
 };
 
 export const isSaveable = (type, settings) => {
@@ -98,14 +99,13 @@ export const clearPlotIfAny = (title, dataset) => {
 };
 
 export const useWindowSize = () => {
-    const [size, setSize] = useState([0, 0]);
+    const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
     useLayoutEffect(() => {
         const updateSize = () => {
             setSize([window.innerWidth, window.innerHeight]);
         };
 
         window.addEventListener('resize', updateSize);
-        updateSize();
         return () => window.removeEventListener('resize', updateSize);
     }, []);
     return size;

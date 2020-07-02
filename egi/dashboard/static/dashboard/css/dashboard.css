@@ -1,9 +1,26 @@
-#plot-grid {
-    margin-left: 15px;
+#global-settings-instructions {
+    margin-top: 1rem;
 }
 
-#global-settings-instructions {
-    margin-top: 14px;
+.ui.tabular.menu {
+    margin: 0;
+}
+
+.ui.tab.loading-pane {
+    min-height: calc(100vh - 88.84px - 41px); /* navbar, tab */
+}
+
+.ui.loader {
+    top: 25%;
+}
+
+.ui.segment.tab-pane {
+    border: none;
+}
+
+.ui.bottom.segment.active.tab {
+    margin: 0;
+    border-bottom: 0;
 }
 
 .ui.modal {
@@ -21,13 +38,26 @@
     right: 10px;
 }
 
-.plot-container.column {
+.ui.segment.global-settings {
+    box-shadow: 0 0;
+}
+
+.ui.grid > .row {
+    padding: 1rem;
+}
+
+.js-plotly-plot > .plotly.plot-container {
     padding: 0;
 }
 
- /*>42px -> "mean+median+sd" radio is cut off. >37px -> horizontal scrollbar appears*/
-.plot-form.column {
+.ui.grid > .row > .column.plot-container {
+    margin: 0;
+}
+
+/*>42px -> "mean+median+sd" radio is cut off. >37px -> horizontal scrollbar appears*/
+.ui.grid > .row >.column.plot-form {
     padding: 0 37px;
+    margin: 0;
 }
 
 .plot-form.segment {

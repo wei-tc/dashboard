@@ -2,26 +2,51 @@
 {% load static %}
 
 {% block css %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Nunito+Sans"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Nunito+Sans"/>
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 {% endblock %}
 
 {% block title %}Login{% endblock %}
 
 {% block main %}
-    {{ block.super }}
-    <div class='container'>
-        <div class="login">
-            <h2 class='login-title'>L<span>o</span>gin</h2>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button style="width: 250px" type="submit" class="btn btn-success">Login</button>
-            </form>
-            <p class='disclaimer'><br>By using this service, I consent to keep my username and password private. I
-                recognise that I am liable for any breach of
-                data arising from my sharing of these details</p>
+{{ block.super }}
+
+<div class="ui container login-form">
+    {% if form.errors %}
+    <div class="ui icon negative message login-error">
+        <i aria-hidden="true" class="red exclamation circle icon"></i>
+        <div class="content">
+            <div class="header">Wrong username or password</div>
+            Both fields may be case-sensitive.
         </div>
     </div>
+    {% endif %}
+
+    <div class="ui segment login-form">
+        <div class="ui header center aligned login-title">L<span>o</span>gin</div>
+        <form class="ui form fluid" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label>Username</label>
+                <div class="ui input">
+                    <input type="text" name="username"/>
+                </div>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <div class="ui input">
+                    <input type="password" name="password"/>
+                </div>
+            </div>
+            <button type="submit" class="ui fluid button login">Login</button>
+        </form>
+    </div>
+
+    <div class="ui warning icon message disclaimer">
+        <i aria-hidden="true" class="exclamation triangle icon"></i>
+        By using this service, I consent to keeping my username and password private.<br>
+        I recognise that I am liable for any breach of data arising from my sharing of these details.
+    </div>
+</div>
 {% endblock %}

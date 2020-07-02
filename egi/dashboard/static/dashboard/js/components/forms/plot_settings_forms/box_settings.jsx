@@ -2,11 +2,11 @@ import {CONSTANTS} from "../../../plot/constants";
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Form} from "semantic-ui-react";
 import {
-    getDefaultFromOptionsIfAny,
-    handleDropdownChange, setDefaultFromSettingsOrOptionsIfAny,
-    toOptions,
+    getDefaultFromDropdownOptionsIfAny,
+    handleDropdownChange, setDefaultFromSettingsOrDropdownOptionsIfAny,
+    toDropdownOptions,
     toSelectedOptions,
-    handleRadioChange
+    handleRadioChange, setDefaultFromSettingsIfAny
 } from "./plot_settings_helpers";
 import {isObjEmpty} from "../../../data/transform";
 import PropTypes from "prop-types";
@@ -23,7 +23,7 @@ const TYPE = toSelectedOptions(['Include outliers', 'Exclude outliers but displa
 
 export const BoxSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
@@ -34,12 +34,17 @@ export const BoxSettings = (props) => {
     const [groupBy, setGroupBy] = useState('');
 
     useEffect(() => {
-        const options = toOptions(Object.keys(data));
+        const options = toDropdownOptions(Object.keys(data));
         setColumns(options);
 
-        handleDropdownChangeBy(setGroups, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.BOX_GROUPS_FORM, hasDefaults, settings, []));
-        handleDropdownChangeBy(setOutlier, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.BOX_OUTLIER_FORM, hasDefaults, settings, TYPE.default));
-        handleDropdownChangeBy(setGroupBy, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.BOX_GROUPBY_FORM, hasDefaults, settings, getDefaultFromOptionsIfAny(['Location', 'location'], options)));
+        handleDropdownChangeBy(setGroups, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.BOX_GROUPS_FORM, hasDefaults, settings, []));
+        handleDropdownChangeBy(setOutlier, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.BOX_OUTLIER_FORM, hasDefaults, settings, TYPE.default));
+        if (clientView) {
+            handleDropdownChangeBy(setGroupBy, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.BOX_GROUPBY_FORM, hasDefaults, settings));
+        } else {
+            handleDropdownChangeBy(setGroupBy, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(
+                CONSTANTS.BOX_GROUPBY_FORM, hasDefaults, settings, getDefaultFromDropdownOptionsIfAny(['Location', 'location'], options)));
+        }
 
         setSettings(s => ({
             ...s,

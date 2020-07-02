@@ -8,7 +8,6 @@ import {
 import {CONSTANTS} from "../constants";
 import {
     addStandardTracesIfAny,
-    plot_height,
     PLOT_MARGIN
 } from "../render";
 
@@ -30,7 +29,6 @@ export const renderBox = (plot, dataset, standards) => {
         boxmode: boxMode,
         showlegend: true,
         ...PLOT_MARGIN,
-        height: plot_height
     };
 
     sortPlotDataAlphanumericallyByName(data);

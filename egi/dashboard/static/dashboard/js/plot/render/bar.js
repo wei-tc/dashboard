@@ -8,7 +8,6 @@ import {
 import {
     addStandardTracesIfAny,
     MARKER_OUTLINE,
-    plot_height,
     PLOT_MARGIN
 } from "../render";
 
@@ -45,7 +44,6 @@ export const renderBar = (plot, dataset, standards) => {
         xaxis: {title: {text: xLabel}, automargin: true},
         yaxis: {title: {text: yLabel}, automargin: true},
         ...PLOT_MARGIN,
-        height: plot_height
     };
     return {data: addStandardTracesIfAny(data, standards, [yLabel], groups.slice()), layout: layout};
 };

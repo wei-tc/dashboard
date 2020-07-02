@@ -1,75 +1,61 @@
 import {fetchAllDatasets, fetchAllPlotData} from './data/fetch';
 import {CONSTANTS} from './plot/constants';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {render} from 'react-dom';
-import {fetchAllStandardsThenToDropdownOptions, filterStandardsBySelected, isObjEmpty} from './data/transform';
+import {
+    fetchAllStandardsThenToDropdownOptions,
+    filterStandardsBySelected,
+    sortAlphanumerically
+} from './data/transform';
 import {TabView} from './components/tab_view';
-import {Tab} from 'semantic-ui-react';
+import {Dimmer, Loader, Tab} from 'semantic-ui-react';
 import {ALL_PLOTS_URL, DATASETS_URL, STANDARDS_URL} from "./api";
 
 const ClientPlotsView = () => {
-    const [allPlotData, setAllPlotData] = useState([]);
-    const [allStandards, setStandards] = useState([]);
-    const [datasets, setDatasets] = useState({});
-    const [panes, setPanes] = useState([]);
+    const [panes, setPanes] = useState([{
+        menuItem: 'Loading...',
+        pane: <Tab.Pane key={'loading'} className={'loading-pane'}>
+            <Dimmer inverted active >
+                <Loader size={'massive'}/>
+            </Dimmer>
+        </Tab.Pane>
+    }]);
 
     useEffect(() => {
-        fetchAllPlotData(ALL_PLOTS_URL)
-            .then(p => setAllPlotData(p))
-            .catch(e => console.error(e));
-
-        fetchAllStandardsThenToDropdownOptions(STANDARDS_URL)
-            .then(s => setStandards(s))
+        loadPanes()
             .catch(e => console.error(e));
     }, []);
 
-    useEffect(() => {
-        if (allPlotData.length === 0) {
-            return;
-        }
-
+    const loadPanes = async () => {
+        const promisedStandards = fetchAllStandardsThenToDropdownOptions(STANDARDS_URL);
+        const allPlotData = await fetchAllPlotData(ALL_PLOTS_URL);
         const promisedDatasets = fetchAllDatasets(DATASETS_URL, allPlotData);
-        awaitThenSetDatasets(promisedDatasets);
-    }, [allPlotData]);
 
-    const awaitThenSetDatasets = useCallback(async (promisedDatasets) => {
-        const resolvedDatasets = {};
-        for (const [name, dataset] of Object.entries(promisedDatasets)) {
-            resolvedDatasets[name] = await dataset;
-        }
+        const allStandards = await promisedStandards;
 
-        setDatasets(resolvedDatasets);
-    }, []);
-
-    useEffect(() => {
-        if (isObjEmpty(datasets) || allPlotData.length === 0) {
-            return;
-        }
-
-        const propsOfPlotsByDataset = {};
-
-        for (let i = allPlotData.length - 1; i >= 0; i--) {
+        let propsOfPlotsByDataset = {};
+        for (let i = 0; i < allPlotData.length; i++) {
             const plot = allPlotData[i];
             const plotStandards = plot[CONSTANTS.SETTINGS][CONSTANTS.INDUSTRY_STANDARDS_FORM];
             const filteredStandards = filterStandardsBySelected(allStandards, plotStandards);
             const name = plot.dataset;
-            const props = toPlotComponentProp(plot, filteredStandards, datasets[name]);
+            const props = toPlotComponentProp(plot, filteredStandards, await promisedDatasets[name]);
             (propsOfPlotsByDataset[name] = propsOfPlotsByDataset[name] || []).push(props);
         }
 
-        const newPanes = Object.entries(propsOfPlotsByDataset).map(([name, propsOfPlots]) => ({
+        const sortedDatasetNames = sortAlphanumerically(Object.keys(propsOfPlotsByDataset));
+        const newPanes = sortedDatasetNames.map(name => ({
             menuItem: name,
-            render: () => <Tab.Pane attached={false}>
-                <TabView key={name} standards={allStandards} propsOfPlots={propsOfPlots}/>
+            pane: <Tab.Pane key={name} className={'tab-pane'}>
+                <TabView standards={allStandards} propsOfPlots={sortAlphanumerically(propsOfPlotsByDataset[name], 'title')}/>
             </Tab.Pane>
         }));
 
         setPanes(newPanes);
+    };
 
-    }, [allStandards, datasets]);
-
-    const toPlotComponentProp = useCallback((plot, fetchedStandards, fetchedDataset) => {
+    const toPlotComponentProp = (plot, fetchedStandards, fetchedDataset) => {
         const settings = plot[CONSTANTS.SETTINGS];
         return {
             title: plot.name,
@@ -91,11 +77,11 @@ const ClientPlotsView = () => {
             settings: settings,
             aggregationType: plot[CONSTANTS.AGGREGATION_TYPE]
         };
-    }, []);
+    };
 
     return (
         <>
-            <Tab menu={{pointing: false, attached: false, tabular: true}} panes={panes}/>
+            <Tab menu={{pointing: false, attached: true, tabular: true}} panes={panes} renderActiveOnly={false}/>
         </>
     );
 };

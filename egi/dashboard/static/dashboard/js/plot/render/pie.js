@@ -1,6 +1,6 @@
 import {CONSTANTS} from "../constants";
 import {filterLastYFromLocationIfLastAggregationType, reduceArrayByType} from "../../data/transform";
-import {MARKER_OUTLINE, plot_height, PLOT_MARGIN} from "../render";
+import {MARKER_OUTLINE, PLOT_MARGIN} from "../render";
 
 export const renderPie = (plot, dataset) => {
     const settings = plot[CONSTANTS.SETTINGS];
@@ -23,7 +23,6 @@ export const renderPie = (plot, dataset) => {
     const layout = {
         title: plot.name,
         ...PLOT_MARGIN,
-        height: plot_height
     };
 
     return {data: data, layout: layout};

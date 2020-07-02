@@ -3,8 +3,8 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Form} from "semantic-ui-react";
 import {
     handleDropdownChange, setDefaultFromSettingsIfAny,
-    setDefaultFromSettingsOrOptionsIfAny,
-    toOptions
+    setDefaultFromSettingsOrDropdownOptionsIfAny,
+    toDropdownOptions
 } from "./plot_settings_helpers";
 import {isObjEmpty} from "../../../data/transform";
 import PropTypes from "prop-types";
@@ -14,11 +14,11 @@ export const PIE_IS_SAVEABLE = settings => settings[CONSTANTS.PIE_GROUPS_FORM]
     && settings[CONSTANTS.PIE_GROUPS_FORM].length > 0
     && settings[CONSTANTS.AGGREGATION_TYPE];
 
-const AGGREGATION_TYPE = toOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
+const AGGREGATION_TYPE = toDropdownOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
 
 export const PieSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
@@ -26,9 +26,9 @@ export const PieSettings = (props) => {
     const [agg, setAgg] = useState('');
 
     useEffect(() => {
-        setColumns(toOptions(Object.keys(data)));
+        setColumns(toDropdownOptions(Object.keys(data)));
 
-        handleDropdownChangeBy(setGroups, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.PIE_GROUPS_FORM, hasDefaults, settings, []));
+        handleDropdownChangeBy(setGroups, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.PIE_GROUPS_FORM, hasDefaults, settings, []));
         handleDropdownChangeBy(setAgg, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.AGGREGATION_TYPE, hasDefaults, settings));
 
         return () => {

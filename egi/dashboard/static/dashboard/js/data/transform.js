@@ -252,7 +252,7 @@ export const filterByTimeRange = (dataset, timeFilterSetting, start, end) => {
  * @returns {column: [values]}
  */
 export const filterByValues = (dataset, colName, filterFunc) => {
-    if (!dataset || !colName) {
+    if (isObjEmpty(dataset) || !colName) {
         return dataset;
     }
 
@@ -361,13 +361,23 @@ export const sortPlotDataAlphanumericallyByName = (data) => {
 /**
  * Pure function
  *
- * @param data []
+ * @param data: []
+ * @param key: string || undefined
  * @returns []
  */
-export const sortAlphanumerically = (data) => {
+export const sortAlphanumerically = (data, key) => {
     const sorted = [...data];
-    return sorted.sort((a, b) => a.localeCompare(b, undefined, {
-        numeric: true,
-        sensitivity: 'base'
-    }));
+    return sorted.sort((a, b) => {
+        if (key !== undefined) {
+            return a[key].localeCompare(b[key], undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            })
+        } else {
+            return a.localeCompare(b, undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            })
+        }
+    });
 };

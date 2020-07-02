@@ -2,10 +2,10 @@ import {CONSTANTS} from "../../../plot/constants";
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Form} from "semantic-ui-react";
 import {
-    getDefaultFromOptionsIfAny,
+    getDefaultFromDropdownOptionsIfAny,
     handleDropdownChange,
-    setDefaultFromSettingsIfAny, setDefaultFromSettingsOrOptionsIfAny,
-    toOptions,
+    setDefaultFromSettingsIfAny, setDefaultFromSettingsOrDropdownOptionsIfAny,
+    toDropdownOptions,
 } from "./plot_settings_helpers";
 import {isObjEmpty} from "../../../data/transform";
 import PropTypes from "prop-types";
@@ -15,11 +15,11 @@ export const BAR_IS_SAVEABLE = settings => settings[CONSTANTS.BAR_X_FORM]
     && settings[CONSTANTS.BAR_Y_FORM]
     && settings[CONSTANTS.AGGREGATION_TYPE];
 
-const AGGREGATION_TYPE = toOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
+const AGGREGATION_TYPE = toDropdownOptions(['Last', 'Max', 'Min', 'Mean', 'Median']);
 
 export const BarSettings = (props) => {
     const {data, name} = useContext(DatasetContext);
-    const {settings, setSettings} = useContext(SettingsContext);
+    const {settings, setSettings, clientView} = useContext(SettingsContext);
 
     const hasDefaults = !isObjEmpty(settings);
     const [columns, setColumns] = useState([]);
@@ -28,10 +28,10 @@ export const BarSettings = (props) => {
     const [agg, setAgg] = useState('');
 
     useEffect(() => {
-        const options = toOptions(Object.keys(data));
+        const options = toDropdownOptions(Object.keys(data));
         setColumns(options);
 
-        handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsOrOptionsIfAny(CONSTANTS.BAR_X_FORM, hasDefaults, settings, getDefaultFromOptionsIfAny(['Location', 'location'], options)));
+        handleDropdownChangeBy(setX, setSettings)(...setDefaultFromSettingsOrDropdownOptionsIfAny(CONSTANTS.BAR_X_FORM, hasDefaults, settings, getDefaultFromDropdownOptionsIfAny(['Location', 'location'], options)));
         handleDropdownChangeBy(setY, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.BAR_Y_FORM, hasDefaults, settings));
         handleDropdownChangeBy(setAgg, setSettings)(...setDefaultFromSettingsIfAny(CONSTANTS.AGGREGATION_TYPE, hasDefaults, settings));
 

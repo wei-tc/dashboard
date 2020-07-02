@@ -8,7 +8,7 @@ import {
     min,
     reduceArrayByType, sortPlotDataAlphanumericallyByName
 } from "../../data/transform";
-import {plot_height, PLOT_MARGIN} from "../render";
+import {PLOT_MARGIN} from "../render";
 
 export const renderGeographical = (plot, dataset) => {
     //Renders geographical bubble plot from dataset
@@ -48,7 +48,6 @@ export const renderGeographical = (plot, dataset) => {
             itemsizing: 'constant',
         },
         ...PLOT_MARGIN,
-        height: plot_height
     };
 
     Plotly.setPlotConfig({

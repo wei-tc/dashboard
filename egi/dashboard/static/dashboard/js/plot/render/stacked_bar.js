@@ -7,7 +7,6 @@ import {
 import {CONSTANTS} from "../constants";
 import {
     MARKER_OUTLINE,
-    plot_height,
     PLOT_MARGIN,
 } from "../render";
 
@@ -28,7 +27,6 @@ export const renderStackedBar = (plot, dataset) => {
         xaxis: {automargin: true},
         yaxis: {automargin: true},
         ...PLOT_MARGIN,
-        height: plot_height,
     };
 
     return {data: data, layout: layout};
