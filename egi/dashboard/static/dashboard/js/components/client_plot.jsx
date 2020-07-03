@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {clearPlotIfAny, createPlotSettings, Plot, useWindowSize} from './plot';
+import {createPlotSettings, PlotWrapper, useWindowSize} from './plot_wrapper';
 import {isObjEmpty} from '../data/transform';
 import PropTypes from 'prop-types';
 import {Form, Grid, Segment} from 'semantic-ui-react';
@@ -10,7 +10,7 @@ import {PlotSettingsForm} from './forms/plot_settings_form';
 import {DatasetContext, SettingsContext} from '../context';
 import {CONSTANTS, HEIGHT_FACTOR} from "../plot/constants";
 
-const PLOT_PADDING = 14;
+export const PLOT_PADDING = 14;
 
 export function ClientPlot(props) {
     const [standards, setStandards] = useState(isObjEmpty(props.tabStandards) ? props.plotProps.standards : props.tabStandards);
@@ -55,12 +55,6 @@ export function ClientPlot(props) {
         }
     }, [props.plotProps, props.tabStandards, props.tabColumnFilter, props.tabTimeFilter, props.tabTimeFilterRange]);
 
-    useEffect(() => {
-        return () => {
-            clearPlotIfAny(title.length > 0 ? title : props.plotProps.title, props.dataset)
-        }
-    }, [props.dataset, props.plotProps.title, title]);
-
     const plotWidth = useCallback(() => {
         const padding = PLOT_PADDING * 6;
         const paddingAdjustedWidth = width - padding;
@@ -74,9 +68,9 @@ export function ClientPlot(props) {
     return (
         <Grid.Row style={{height: height * HEIGHT_FACTOR + PLOT_PADDING * 2}}>
             <Grid.Column width={13} className={'plot-container'}>
-                <Plot title={title.length > 0 ? title : props.plotProps.title} standards={standards}
-                      dataset={props.dataset} type={props.plotProps.type} settings={plotSettings}
-                      displayable={true} height={height * HEIGHT_FACTOR} width={plotWidth()}/>
+                <PlotWrapper title={title.length > 0 ? title : props.plotProps.title} standards={standards}
+                             dataset={props.dataset} type={props.plotProps.type} settings={plotSettings}
+                             displayable={true} height={height * HEIGHT_FACTOR} width={plotWidth()}/>
             </Grid.Column>
             <Grid.Column width={3} className={'plot-form'}>
                 <Segment className={'plot-form'} style={{height: height * HEIGHT_FACTOR}}>

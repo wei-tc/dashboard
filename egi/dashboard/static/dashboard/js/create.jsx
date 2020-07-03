@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 import {postPlot} from './data/transform';
 import {CONSTANTS} from './plot/constants';
 import {Button, Form, Grid, Message, Segment} from 'semantic-ui-react';
-import {clearPlotIfAny, createPlotSettings, isDisplayable, isSaveable, Plot, useWindowSize} from './components/plot';
+import {clearPlotIfAny, createPlotSettings, isDisplayable, isSaveable, PlotWrapper, useWindowSize} from './components/plot_wrapper';
 import {ColumnFilterDropdown} from './components/forms/column_filter_dropdown';
 import {TimeFilterDropdown} from './components/forms/time_filter_dropdown';
 import {DatasetDropdown} from './components/forms/dataset_dropdown';
@@ -38,15 +38,11 @@ function CreatePlotForm() {
     const [width, height] = useWindowSize();
 
     useEffect(() => {
-        setPlotDisplayable(isDisplayable(title, dataset, type));
+        setPlotDisplayable(Boolean(isDisplayable(title, dataset, type)));
         return () => {
             setMessage(null);
         }
     }, [title, dataset, standards, type, columnFilter, timeFilter, timeFilterRange, plotTypeSettings]);
-
-    useEffect(() => {
-        return () => clearPlotIfAny(title, dataset);
-    }, [title, dataset, type]);
 
     const handleSubmit = useCallback(async e => {
         const data = {
@@ -119,10 +115,10 @@ function CreatePlotForm() {
                 </Grid.Column>
                 <Grid.Column width={11}>
                     {message}
-                    <Plot title={title} standards={standards} dataset={dataset}
-                          type={type} settings={settings}
-                          displayable={plotDisplayable} height={height - NAVBAR_HEIGHT - CONTAINER_MARGIN}
-                    />
+                    {plotDisplayable && <PlotWrapper title={title} standards={standards} dataset={dataset}
+                                 type={type} settings={settings}
+                                 displayable={plotDisplayable} height={height - NAVBAR_HEIGHT - CONTAINER_MARGIN}
+                    />}
                 </Grid.Column>
             </Grid>
         </>

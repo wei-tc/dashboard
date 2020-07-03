@@ -1,15 +1,8 @@
-import React, {useEffect, useState, useLayoutEffect} from 'react';
-import {
-    CONSTANTS, PLOT_TYPES,
-    plotContainerId,
-    plotId,
-    removeSpaces,
-    VALID_HTML_ID_REGEX
-} from '../plot/constants';
-import {ALL_PLOT_TYPES, renderPlot} from '../plot/render';
-import {Container} from 'semantic-ui-react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {CONSTANTS, PLOT_TYPES, removeSpaces, VALID_HTML_ID_REGEX} from '../plot/constants';
+import {ALL_PLOT_TYPES, PLOT_MARGIN, transformToPlot} from '../plot/render';
 import PropTypes from 'prop-types';
-import {isObjEmpty} from '../data/transform';
+import {filterByColValues, filterByTimeRange, isObjEmpty} from '../data/transform';
 import {BAR_IS_SAVEABLE} from "./forms/plot_settings_forms/bar_settings";
 import {STACKED_BAR_IS_SAVEABLE} from "./forms/plot_settings_forms/stacked_bar_settings";
 import {TIMESERIES_IS_SAVEABLE} from "./forms/plot_settings_forms/timeseries_settings";
@@ -17,32 +10,68 @@ import {GEOGRAPHICAL_IS_SAVEABLE} from "./forms/plot_settings_forms/geographical
 import {BOX_IS_SAVEABLE} from "./forms/plot_settings_forms/box_settings";
 import {PIE_IS_SAVEABLE} from "./forms/plot_settings_forms/pie_settings";
 import {SCATTER_IS_SAVEABLE} from "./forms/plot_settings_forms/scatter_settings";
+import createPlotlyComponent from 'react-plotly.js/factory';
+const Plot = createPlotlyComponent(Plotly);
 
-export function Plot(props) {
+const CONFIG = {
+    responsive: true,
+    displaylogo: false,
+    showSendToCloud: true,
+    scrollZoom: true,
+    plotlyServerURL: 'https://chart-studio.plotly.com'
+};
+
+export function PlotWrapper(props) {
+    const [plotData, setPlotData] = useState([]);
+    const [plotLayout, setPlotLayout] = useState();
+
     useEffect(() => {
-        if (props.displayable && isSaveable(props.type, props.settings)) {
-            const plotData = {
-                name: props.title,
-                dataset: props.dataset.name,
-                plot_type: props.type,
-                [CONSTANTS.SETTINGS]: props.settings,
-            };
-
-            renderPlot(plotData, {...props.dataset.data}, props.standards, props.height, props.width);
+        if (!props.displayable || !isSaveable(props.type, props.settings)) {
+            return;
         }
-    }, [props.width, props.height, props.title, props.dataset, props.standards, props.type, props.displayable, props.settings]);
 
+        const plotConfig = {
+            name: props.title,
+            dataset: props.dataset.name,
+            plot_type: props.type,
+            [CONSTANTS.SETTINGS]: props.settings,
+        };
 
+        const dataset = {...props.dataset.data};
+        const settings = plotConfig[CONSTANTS.SETTINGS];
+
+        let filteredDataset = filterByColValues(dataset, settings[CONSTANTS.COL_FILTER_NAME], settings[CONSTANTS.COL_FILTER_VALUES]);
+        filteredDataset = filterByTimeRange(filteredDataset, settings[CONSTANTS.TIME_FILTER_NAME], settings[CONSTANTS.TIME_FILTER_START], settings[CONSTANTS.TIME_FILTER_END]);
+
+        const {data, layout} = transformToPlot(plotConfig, filteredDataset, props.standards, props.height, props.width);
+        layout.height = props.height;
+        layout.width = props.width;
+        setPlotData(data);
+        setPlotLayout(layout);
+    }, [props.dataset, props.standards, props.type, props.displayable, props.settings]);
+
+    useEffect(() => {
+        setPlotLayout(prevLayout => ({
+            ...prevLayout,
+            title: props.title,
+            width: props.width,
+            height: props.height
+        }));
+    }, [props.title, props.width, props.height]);
 
     return (
         <>
-            {props.displayable && isSaveable(props.type, props.settings) &&
-             <Container id={plotContainerId(props.title, props.dataset.name)} className={'plot-container'} fluid/>}
+            <Plot
+                data={plotData}
+                layout={plotLayout}
+                config={CONFIG}
+                style={{width: "100%", height: "100%"}}
+            />
         </>
     );
 }
 
-Plot.propTypes = {
+PlotWrapper.propTypes = {
     title: PropTypes.string.isRequired,
     dataset: PropTypes.object.isRequired,
     standards: PropTypes.object.isRequired,
@@ -83,19 +112,8 @@ export const createPlotSettings = (title, standards, columnFilter, timeFilter, t
 
 export const isDisplayable = (title, dataset, type) => {
     const spaceFiltered = removeSpaces(title);
-    return !isObjEmpty(dataset) && type
-           && VALID_HTML_ID_REGEX.test(spaceFiltered)
-};
-
-export const clearPlotIfAny = (title, dataset) => {
-    if (title === undefined || isObjEmpty(dataset)) {
-        return;
-    }
-
-    const plotNode = document.getElementById(`${plotId(title, dataset.name)}`);
-    if (plotNode) {
-        plotNode.remove(); // necessary if the title changes
-    }
+    return Boolean(!isObjEmpty(dataset) && type
+        && VALID_HTML_ID_REGEX.test(spaceFiltered))
 };
 
 export const useWindowSize = () => {

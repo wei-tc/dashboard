@@ -9,9 +9,10 @@ import {
 } from "./data/transform";
 import {fetchAllDatasets, fetchAllPlotData, fetchToJson} from "./data/fetch";
 import {CONSTANTS} from "./plot/constants";
-import {Plot} from "./components/plot";
+import {PlotWrapper} from "./components/plot_wrapper";
 import {ManagementHelp} from "./components/help/management";
 import {ALL_PLOTS_URL, ALL_USERS_URL, DATASETS_URL, STANDARDS_URL} from "./api";
+import {PLOT_PADDING} from "./components/client_plot";
 
 function ManagementForm() {
     const [allUserPlotData, setAllUserPlotData] = useState({});
@@ -172,8 +173,9 @@ function ManagementForm() {
         }
     }, [preview, loadPreview, scrollDown]);
 
-    const scrollDown = useCallback(() => {
-        window.scrollTo({top: previewContainer.current.offsetTop - 14, left: 0, behavior: 'smooth'})
+    const scrollDown = useCallback(async () => {
+        await new Promise(r => setTimeout(r, 1)); // without trivial timeout, scrollTo abruptly stops mid-scroll
+        window.scrollTo({top: previewContainer.current.offsetTop - PLOT_PADDING, left: 0, behavior: 'smooth'})
     }, [previewContainer]);
 
     useEffect(() => {
@@ -301,7 +303,7 @@ function ManagementForm() {
                 {preview.length > 0 && <Divider horizontal><Header>PREVIEW</Header></Divider>}
                 {preview.length > 0 && preview.map(p => (
                     <Segment className={'plot-container'} key={p.title} attached={'bottom'}>
-                        <Plot
+                        <PlotWrapper
                             title={p.title}
                             standards={p.standards}
                             dataset={p.dataset}

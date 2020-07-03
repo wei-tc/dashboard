@@ -9,7 +9,6 @@ import {renderStackedBar} from "./render/stacked_bar";
 import {renderTimeSeries} from "./render/time_series";
 
 export const ALL_PLOT_TYPES = ['Bar', 'Stacked Bar', 'Box', 'Geographical', 'Pie', 'Scatter', 'Time Series'];
-export const CONFIG = {responsive: true, displaylogo: false, showSendToCloud: true, scrollZoom: true, plotlyServerURL: 'https://chart-studio.plotly.com'};
 export const MARKER_OUTLINE = {
     color: 'DarkSlateGrey',
     width: 1
@@ -23,21 +22,7 @@ export const PLOT_MARGIN = {
     }
 };
 
-export const renderPlot = async (plot, dataset, standards, height, width) => {
-    const settings = plot[CONSTANTS.SETTINGS];
-
-    let filteredDataset = filterByColValues(dataset, settings[CONSTANTS.COL_FILTER_NAME], settings[CONSTANTS.COL_FILTER_VALUES]);
-    filteredDataset = filterByTimeRange(filteredDataset, settings[CONSTANTS.TIME_FILTER_NAME], settings[CONSTANTS.TIME_FILTER_START], settings[CONSTANTS.TIME_FILTER_END]);
-
-    const plotData = getPlotData(plot, filteredDataset, standards, height, width);
-    plotData.layout.width = width;
-    plotData.layout.height = height;
-    const plotNode = setupContainer(plot.name, plot.dataset);
-    plotData.config = CONFIG;
-    Plotly.react(plotNode, plotData);
-};
-
-const getPlotData = (plot, dataset, standards, height, width) => {
+export const transformToPlot = (plot, dataset, standards, height, width) => {
     if (isObjEmpty(dataset)) {
         return noData({
             data: [],

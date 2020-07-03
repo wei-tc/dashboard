@@ -7,7 +7,6 @@ import {TimeFilterDropdown} from './forms/time_filter_dropdown';
 import {IndustryStandardsDropdown} from "./forms/industry_standards_dropdown";
 import {GlobalSettingsHelp} from "./help/global_settings";
 import {DatasetContext} from "../context";
-import {CONSTANTS} from "../plot/constants";
 
 const INSTRUCTIONS = <p>
     Global settings override the corresponding settings for all plots in this tab.<br/>
